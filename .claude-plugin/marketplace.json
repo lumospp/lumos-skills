@@ -1,0 +1,18 @@
+{
+  "name": "lumos-skills",
+  "owner": {
+    "name": "lumospp"
+  },
+  "plugins": [
+    {
+      "name": "lumos-research",
+      "source": "./",
+      "description": "Evidence-first research and evidence-audit skills from Lumos Skills.",
+      "strict": false,
+      "skills": [
+        "./research",
+        "./evidence-audit"
+      ]
+    }
+  ]
+}
