@@ -1,16 +1,22 @@
 # Lumos Skills Architecture
 
-> Platform-neutral first. Platform adapters stay outside the core skills.
+> Platform-neutral first. Topic-neutral by design. Platform adapters stay outside the core Skills.
 
 ## 1. Goal
 
-`lumos-skills` is the public distribution repository for reusable Agent Skills.
+`lumos-skills` is a general public toolbox for reusable Agent Skills.
 
-The repository follows one rule:
+It is intentionally **not** limited to research, cognition, coding, robotics, writing, or any other single domain.
 
-> **A skill has one canonical source. Platform-specific packaging may reference it, but must not fork or duplicate it unless a platform makes that unavoidable.**
+The repository is unified by structure and publishing discipline rather than subject matter.
 
-This keeps research logic portable across Claude Code, Codex, ChatGPT, and other clients that support the Agent Skills format.
+A Skill belongs here when it solves a useful recurring problem, is portable enough to share, and its provenance permits redistribution.
+
+The main architectural rule is:
+
+> **A Skill has one canonical source. Platform-specific packaging may reference it, but should not fork or duplicate it unless a platform makes that unavoidable.**
+
+This keeps Skill behavior portable across Claude Code, Codex, and other clients that support the Agent Skills format.
 
 ## 2. Canonical layout
 
@@ -18,19 +24,26 @@ This keeps research logic portable across Claude Code, Codex, ChatGPT, and other
 lumos-skills/
 ├── README.md
 ├── docs/
-│   └── ARCHITECTURE.md
-├── research/
+│   ├── ARCHITECTURE.md
+│   └── PUBLISHING.md
+│
+├── <skill-a>/
 │   ├── SKILL.md
-│   └── references/
-├── evidence-audit/
+│   ├── ORIGIN.md          # adapted/ported only
+│   ├── references/
+│   ├── scripts/
+│   └── assets/
+│
+├── <skill-b>/
 │   └── SKILL.md
+│
 └── .claude-plugin/
     └── marketplace.json
 ```
 
-Each top-level skill directory is a standalone Agent Skill and is the canonical source for that skill.
+Each top-level Skill directory is a standalone Agent Skill and the canonical source for that capability.
 
-A canonical skill follows the Agent Skills structure:
+A canonical Skill follows the public Agent Skills structure:
 
 ```text
 skill-name/
@@ -40,25 +53,51 @@ skill-name/
 └── assets/           # optional
 ```
 
+`ORIGIN.md` is a Lumos repository convention for materially adapted or ported Skills; it is not part of the Agent Skills runtime requirement.
+
 The `name` in `SKILL.md` must match the parent directory name.
 
-## 3. Core layer: Agent Skills
+## 3. Topic neutrality
 
-The core layer must remain platform-neutral.
+Do not build repository-level assumptions that all Skills belong to one product or methodology.
+
+Valid future examples could include:
+
+```text
+research/
+robot-log-diagnosis/
+repo-cleanup/
+writing-review/
+agent-migration/
+knowledge-capture/
+travel-planner/
+...
+```
+
+These capabilities do not need a shared subject. They only need clear responsibilities and compatible packaging.
+
+Related Skills may form a series or bundle, but that grouping must not redefine the entire repository.
+
+For example, `research` and `evidence-audit` currently form a research-related bundle. They are two Skills in the toolbox, not the identity of the toolbox itself.
+
+## 4. Core layer: Agent Skills
+
+The canonical Skill layer must remain platform-neutral where practical.
 
 Rules:
 
 1. Use the public Agent Skills `SKILL.md` format.
-2. Keep platform-specific manifests and commands out of the core skill unless they are essential to the task itself.
+2. Keep platform-specific manifests and install commands out of core Skill behavior unless the task itself requires them.
 3. Use relative paths for supporting files.
-4. Prefer progressive disclosure: keep the main `SKILL.md` focused; move detailed material into `references/`.
-5. Do not add `allowed-tools` merely for convenience; it is experimental and support varies across clients.
-6. Only add `compatibility` when the skill truly requires a specific environment.
-7. Optional metadata must not become a second source of truth for release state.
+4. Prefer progressive disclosure: keep `SKILL.md` focused and move detailed reference material into supporting files.
+5. Do not add `allowed-tools` merely for convenience when cross-client support is uncertain.
+6. Only add `compatibility` when the Skill truly requires a specific environment.
+7. Do not maintain separate Claude/Codex copies just to change packaging.
+8. Do not let repository-level branding leak into the Skill unless it is part of the actual capability.
 
-## 4. Platform adapters
+## 5. Platform adapters
 
-Platform adapters are packaging and distribution layers, not forks of the skill.
+Platform adapters are distribution layers, not behavioral forks.
 
 ### Claude Code
 
@@ -69,7 +108,7 @@ Claude-specific marketplace metadata lives under:
 └── marketplace.json
 ```
 
-The marketplace entry uses the repository root as its source and explicitly points Claude Code to the canonical top-level skill directories.
+A Claude plugin may bundle one or several canonical Skills.
 
 Current bundle:
 
@@ -79,78 +118,149 @@ lumos-research
 └── evidence-audit
 ```
 
-This gives Claude Code namespaced invocations such as:
+This gives namespaced invocations such as:
 
 ```text
 /lumos-research:research
 /lumos-research:evidence-audit
 ```
 
-No duplicate copy of either skill exists under a Claude-only directory.
+Future unrelated Skills should normally use an appropriate new plugin or bundle instead of being added to `lumos-research` merely because they live in the same repository.
+
+Example:
+
+```text
+lumos-research      → research-related Skills
+lumos-dev           → future developer tools
+lumos-robotics      → future robotics Skills
+```
+
+These are examples, not required categories. A single standalone Skill can also be exposed by itself.
 
 ### Codex / OpenAI
 
-No Codex-specific copy is maintained while Codex can consume the Agent Skills format directly.
+No Codex-specific copy is maintained while Codex can consume the common Agent Skills structure directly.
 
-If OpenAI later requires platform-specific packaging, add an adapter that references or packages the canonical skill rather than editing the core workflow for Codex alone.
+If OpenAI later requires special packaging, add an adapter or build artifact that derives from the canonical Skill rather than editing the core workflow solely for Codex.
 
 ### Other agents
 
-Use the same rule: first try the canonical Agent Skills directory. Add a platform adapter only when the platform has a real packaging or runtime requirement that cannot be expressed by the common standard.
+Use the same rule:
 
-## 5. Versioning model
+> canonical Skill first, adapter only when a real platform requirement exists.
 
-Skill behavior is versioned by the release process in the development repository and documented in this public repository.
+## 6. Provenance is part of architecture
 
-Platform package versions, if introduced, are distribution versions and must not silently redefine the underlying skill behavior.
+The repository may contain:
 
-A platform adapter should change only when one of these changes:
+- original Skills;
+- adapted Skills;
+- ported Skills.
 
-- the set of packaged skills;
-- platform-specific manifest requirements;
+Architecture must make those origins visible rather than pretending every directory was created from scratch.
+
+For materially adapted or ported work, include `ORIGIN.md` and comply with the upstream license and notices.
+
+Detailed rules live in [`PUBLISHING.md`](./PUBLISHING.md).
+
+This also means a single repository-wide license should not be assumed to override Skill-specific or upstream license obligations.
+
+## 7. Versioning model
+
+Behavior belongs to the canonical Skill.
+
+Platform package versions, if introduced, describe distribution state and must not silently redefine underlying Skill behavior.
+
+A platform adapter should normally change only when one of these changes:
+
+- packaged Skill set;
+- platform manifest requirements;
 - distribution metadata;
-- platform-specific runtime integration.
+- platform runtime integration.
 
-A change to research methodology belongs in the canonical skill first.
+Behavioral changes belong in the canonical Skill first.
 
-## 6. Release flow
+## 8. Validation model
 
-```text
-private development / evaluation
-        ↓
-behavior tests and regression checks
-        ↓
-canonical Skill release
-        ↓
-public lumos-skills repository
-        ↓
-platform adapters reference the same canonical files
-```
+Validation should be proportional to risk and complexity.
 
-The public repository is a distribution surface, not the primary place for experimental prompt iteration.
+Do not force a tiny formatting utility through the same evaluation stack as an evidence-heavy research system or a destructive automation Skill.
 
-## 7. Future expansion
-
-When new capabilities become stable, add them as new top-level skills rather than growing one universal skill indefinitely.
-
-Example direction:
+A useful mental model:
 
 ```text
-research/             # L1: read the object
-investigation/        # possible L2 capability
-hypothesis/           # possible L3 hypothesis work
-evidence-audit/
-experiment-design/
+low consequence + simple behavior
+→ real-use checks + obvious failure cases
+
+complex / factual / long-running
+→ structured evals + regression cases
+
+security-sensitive / destructive / high-stakes
+→ stronger safeguards + explicit verification
 ```
 
-These names are architectural placeholders, not commitments to implement them now.
+The common requirement is that a published Skill should not be a completely untested prompt whose behavior is unknown to the maintainer.
 
-Claude bundles can then group related canonical skills without changing their portable form.
+## 9. Release flow
 
-## 8. Design test
+For original work:
 
-Before adding any platform-specific file, ask:
+```text
+real problem
+    ↓
+build Skill
+    ↓
+use / test
+    ↓
+understand failure modes
+    ↓
+publish canonical Skill
+    ↓
+platform adapters reference it
+```
+
+For adapted work:
+
+```text
+study upstream
+    ↓
+understand method and implementation
+    ↓
+check license
+    ↓
+adapt deliberately
+    ↓
+document origin + differences
+    ↓
+use / test
+    ↓
+publish
+```
+
+The repository can therefore grow from both personal invention and responsible open-source learning.
+
+## 10. Future expansion
+
+New stable capabilities should normally become new top-level Skills rather than being absorbed into an unrelated existing Skill.
+
+There is no predetermined taxonomy.
+
+Add categories, indexes, routers, or bundles only after the number of Skills creates a real navigation problem.
+
+Do not design a hierarchy for fifty hypothetical Skills when the repository only contains a few.
+
+## 11. Design tests
+
+Before adding a platform-specific file, ask:
 
 > **If this adapter disappeared tomorrow, would the canonical Skill still make sense and remain usable by another Agent Skills client?**
 
-If the answer is no, platform-specific concerns have leaked into the core layer and the design should be reconsidered.
+Before adding a new Skill, ask:
+
+> **Does this solve a real reusable problem, or am I just storing a long prompt?**
+
+Before publishing an adaptation, ask:
+
+> **Can a reader clearly tell what came from upstream, what changed here, and whether the license permits it?**
+
+If any answer is no, fix the structure before publishing.
