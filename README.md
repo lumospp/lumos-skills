@@ -4,7 +4,7 @@
 
 **Open Agent Skills I build, adapt, use, and want to share.**
 
-基于开放的 **Agent Skills** 格式，核心 Skill 保持平台中立；Claude Code 等平台通过外层适配接入。
+基于开放的 **Agent Skills** 格式，核心 Skill 保持平台中立；Claude Code、Codex 等平台通过外层适配接入。
 
 </div>
 
@@ -12,16 +12,7 @@
 
 这里**不限定主题**。只要一个 Skill 来自真实问题、实际使用或值得保留下来的思考，并且可能对别人也有用，就可以在这里发布。
 
-以后可能包括：
-
-- 调研与判断；
-- 编程与工程；
-- AI / Agent 工作流；
-- 机器人；
-- 学习与知识管理；
-- 写作与内容；
-- 自动化与效率工具；
-- 其他有趣但确实有用的东西。
+以后可能包括：调研与判断、编程与工程、AI / Agent 工作流、机器人、学习与知识管理、写作与内容、自动化与效率工具，以及其他有趣但确实有用的东西。
 
 我不想把这里做成 Prompt 收藏夹。更希望它像一个不断生长的开源工具箱：**自己先用，确认有价值，再整理成别人也能安装的 Skill。**
 
@@ -29,13 +20,43 @@
 
 ## Skills
 
-| Skill | What it does | Release |
+| Skill | What it does | Status |
 |---|---|---|
+| 🌱 [`progressive-elaboration`](./progressive-elaboration) | 允许弱输入，通过低压力对话把模糊 Seed 渐进澄清并交接给领域能力 | Experimental |
+| 🧭 [`thinking-router`](./thinking-router) | 先建模再自动选择少量高杠杆思维工具，不要求用户先知道模型名 | Experimental |
 | 🔬 [`research`](./research) | 证据优先的 L1 综合调研：读懂一个对象当前最可靠的已有知识 | V0.3 |
-| 🧪 [`evidence-audit`](./evidence-audit) | 审核一份答案/报告的 Claim → Evidence 链条到底站不站得住 | V0.2 |
-| 🌱 [`progressive-elaboration`](./progressive-elaboration) | 允许从模糊 Seed 开始，通过低压力对话逐步结晶成可执行的问题、任务或下一步 | V0.1 |
+| 🧪 [`evidence-audit`](./evidence-audit) | 审核一份答案 / 报告的 Claim → Evidence 链条到底站不站得住 | V0.2 |
 
 新的 Skill 会直接作为新的顶层目录加入，不要求属于同一个领域。
+
+---
+
+## Composable pattern
+
+这些 Skill 可以独立使用，也可以按状态组合。
+
+例如 Lumos Creator System 当前采用：
+
+```text
+low-resolution input
+   ↓
+progressive-elaboration
+   ↓
+thinking-router
+   ↓
+research / evidence-audit when needed
+   ↓
+domain workflow / artifact
+   ↓
+reality feedback
+```
+
+关键不是机械执行整条流水线，而是：**只调用当前真正需要的能力。**
+
+Creator System 实验文档见：
+
+- [`docs/creator-system/README.md`](./docs/creator-system/README.md)
+- [`docs/creator-system/QUICKSTART.md`](./docs/creator-system/QUICKSTART.md)
 
 ---
 
@@ -43,23 +64,31 @@
 
 ```text
 lumos-skills/
-├── <skill-name>/               # canonical platform-neutral Skill
+├── progressive-elaboration/
 │   ├── SKILL.md
-│   ├── ORIGIN.md               # adapted/ported Skill 时使用
-│   ├── references/             # optional
-│   ├── scripts/                # optional
-│   └── assets/                 # optional
+│   └── references/
+│       └── workbench-notes.md
+│
+├── thinking-router/
+│   ├── SKILL.md
+│   ├── ORIGIN.md
+│   └── references/
+│       └── tool-index.md
 │
 ├── research/
-├── evidence-audit/
-├── progressive-elaboration/
+│   ├── SKILL.md
+│   └── references/
 │
-├── .claude-plugin/             # Claude Code distribution adapter
+├── evidence-audit/
+│   └── SKILL.md
+│
+├── .claude-plugin/
 │   └── marketplace.json
 │
 └── docs/
     ├── ARCHITECTURE.md
-    └── PUBLISHING.md
+    ├── PUBLISHING.md
+    └── creator-system/
 ```
 
 每个顶层 Skill 目录都是那项能力的 **canonical source**。
@@ -87,37 +116,79 @@ lumos-skills/
 /lumos-research:evidence-audit
 ```
 
-未来如果出现其他领域的 Skill，可以增加新的 Claude plugin bundle，而不是把所有 Skill 强塞进 `lumos-research`。
+`progressive-elaboration` 与 `thinking-router` 当前仍处于真实 Case 验证阶段，先作为 standalone canonical Skills 使用；等行为稳定后再决定是否加入新的 Claude bundle。
 
 ### Claude Code — install one standalone Skill
 
-也可以把任意 Skill 目录直接交给 Claude Code，例如：
-
-```text
-帮我安装这个 Skill：
-https://github.com/lumospp/lumos-skills/tree/main/research
-```
-
-或者：
+可以把任意 Skill 目录直接交给 Claude Code，例如：
 
 ```text
 帮我安装这个 Skill：
 https://github.com/lumospp/lumos-skills/tree/main/progressive-elaboration
 ```
 
-Standalone 安装通常可直接使用对应 Skill。
+```text
+帮我安装这个 Skill：
+https://github.com/lumospp/lumos-skills/tree/main/thinking-router
+```
 
 ### Codex / other Agent Skills clients
 
-核心 Skill 使用公共 Agent Skills 结构，因此其他兼容客户端直接消费相同目录，不维护一套 Codex-only / Claude-only Skill：
+核心 Skill 使用公共 Agent Skills 结构，因此兼容客户端直接消费相同目录，不维护一套 Codex-only / Claude-only Skill：
 
 ```text
+https://github.com/lumospp/lumos-skills/tree/main/progressive-elaboration
+https://github.com/lumospp/lumos-skills/tree/main/thinking-router
 https://github.com/lumospp/lumos-skills/tree/main/research
 https://github.com/lumospp/lumos-skills/tree/main/evidence-audit
-https://github.com/lumospp/lumos-skills/tree/main/progressive-elaboration
 ```
 
-具体安装命令由各 Agent 客户端决定，Skill 源码保持同一份。
+具体安装命令由各 Agent 客户端决定，Skill 核心源码保持同一份。
+
+---
+
+## 🌱 progressive-elaboration
+
+它解决：
+
+> **用户只有一个模糊念头、感觉、错误现象或半成品目标时，Agent 怎么帮助结构逐渐长出来，而不是要求用户先把问题想清楚？**
+
+核心模式：
+
+```text
+SEED
+→ EXPLORE
+→ CRYSTALLIZE
+→ FRAME
+→ HANDOFF / ACT
+→ VERIFY
+→ LEARN
+```
+
+它是平台无关的人机协作协议，可以放在创作、研究、Coding、产品、学习等 Agent 前面。
+
+→ [`progressive-elaboration/SKILL.md`](./progressive-elaboration/SKILL.md)
+
+---
+
+## 🧭 thinking-router
+
+它解决：
+
+> **问题已经有形状，但用户不知道应该调用哪个思维工具时，Agent 怎么先建模、再自动路由少量真正改变判断的模型？**
+
+核心纪律：
+
+- 先建模，再选工具；
+- 1 个主工具；
+- 至多 3 个不同工位的补充 / 反证工具；
+- 删除后结论不变的模型不用；
+- 模型不能冒充证据；
+- 最终落到行动 / 实验 / 更新条件。
+
+该实现受到万维钢《现代思维工具100讲》及用户提供对应 Skill 的重要启发，但不直接复制上游长文；来源与适配说明见 `ORIGIN.md`。
+
+→ [`thinking-router/SKILL.md`](./thinking-router/SKILL.md)
 
 ---
 
@@ -129,21 +200,7 @@ https://github.com/lumospp/lumos-skills/tree/main/progressive-elaboration
 
 > **关于这个对象，目前最可靠、最可辩护的已有知识是什么？**
 
-适合调研概念、技术、机制、科学问题、快速变化的软件/市场/政策事实，以及查证有争议的说法。
-
-它重点防止：
-
-- 引用是真的，但并不支持写出来的强结论；
-- 不同指标被硬塞进同一个概念；
-- 多篇二手报道实际来自同一个原始来源；
-- 相关关系被写成因果关系；
-- 异质研究被轻率包装成“学界争议”；
-- 搜了很多资料，却没发现关键证据类型缺失；
-- 为了完成回答而掩盖 `Unknown`。
-
-```text
-/lumos-research:research 调研一下 ICAP 学习框架。它的核心主张是什么，现有证据到底支持到什么程度，I > C > A > P 是否真的稳固？
-```
+适合调研概念、技术、机制、科学问题、快速变化的软件 / 市场 / 政策事实，以及查证有争议的说法。
 
 → [`research/SKILL.md`](./research/SKILL.md)
 
@@ -155,41 +212,9 @@ https://github.com/lumospp/lumos-skills/tree/main/progressive-elaboration
 
 > **这份输出里的重要结论，证据到底允许我们相信到什么程度？**
 
-适合审核 AI 研究报告、引用密集的答案、关键数字、因果结论以及看起来很专业但证据链可能有漏洞的材料。
-
-```text
-/lumos-research:evidence-audit 审核刚才那份调研报告，重点检查核心结论、关键数字和引用是否真的匹配。
-```
+适合审核 AI 研究报告、引用密集答案、关键数字、因果结论，以及看起来很专业但证据链可能有漏洞的材料。
 
 → [`evidence-audit/SKILL.md`](./evidence-audit/SKILL.md)
-
----
-
-## 🌱 progressive-elaboration — Progressive Elaboration
-
-它解决的是一个跨领域问题：
-
-> **用户还没有把问题、需求、目标或故障描述清楚时，Agent 怎么先接住一个低分辨率输入，并逐渐把它变成可行动的共享状态？**
-
-它允许从一个概念、一点感觉、一句抱怨、一个报错、一个截图、一个模糊目标开始，通过：
-
-```text
-Seed
-→ Explore（接住 / 展开 / 连接 / 轻问）
-→ Crystallize
-→ Frame
-→ handoff 到 research / coding / product / creator / learning 等领域能力
-```
-
-核心不是“多问几个澄清问题”，而是降低空白页压力：一次只问一个真正改变方向的问题；用户说“不知道”时提供具体支架；AI 可以提炼候选结构，但人保留理解、修正、价值选择和责任。
-
-Creator System 的 Seed-first / Incubation 流程就是这个通用 Skill 的第一个领域实现。
-
-→ [`progressive-elaboration/SKILL.md`](./progressive-elaboration/SKILL.md)
-
-未来 Codex / Agent 工作台的状态驱动想法暂存于：
-
-→ [`progressive-elaboration/references/workbench-notes.md`](./progressive-elaboration/references/workbench-notes.md)
 
 ---
 
@@ -221,28 +246,22 @@ L3 高级调研：读出新问题
 6. **Transparent provenance** — 原创就是原创；基于别人 Skill 改造就明确标注来源和差异。
 7. **Respect licenses** — 公开可见不等于可以任意复制修改，二创前先确认上游许可证。
 8. **Reality feedback** — 真实使用暴露的问题比继续堆 Prompt 规则更有价值。
-9. **Low-resolution input is valid** — 当任务本身还模糊时，Agent 应帮助结构逐渐长出来，而不是要求用户先完成需求分析。
+9. **Human ownership** — Agent 可以降低结构化和执行成本，但不能偷偷夺走目标、价值、修正权与责任。
 
 ---
 
 ## Original, adapted, and ported Skills
 
-这里既可以发布我自己从零形成的 Skill，也可以发布在许可证允许范围内对优秀开源 Skill 的改造。
+这里既可以发布自己从真实实践中形成的 Skill，也可以发布在许可证允许范围内对优秀开源 Skill 的改造。
 
-对于 materially adapted / ported Skill，会在目录中增加：
-
-```text
-ORIGIN.md
-```
-
-记录：
+对于 materially adapted / ported Skill，使用 `ORIGIN.md` 记录：
 
 - upstream URL；
 - 原作者；
 - 上游版本 / commit；
 - 上游 license；
-- 我修改了什么；
-- 为什么要做这次改造。
+- 修改了什么；
+- 为什么改。
 
 详细规则见 [Publishing & Provenance](./docs/PUBLISHING.md)。
 
@@ -250,18 +269,16 @@ ORIGIN.md
 
 ## Inspiration
 
-我会持续学习优秀的公开 Skill 项目，包括但不限于：
+会持续学习优秀公开 Skill 项目，包括但不限于：
 
 - [KKKKhazix/khazix-skills](https://github.com/KKKKhazix/khazix-skills)
 - [dontbesilent2025/dbskill](https://github.com/dontbesilent2025/dbskill)
 
-学习一个 Skill 不等于复制它。真正值得留下来的，是理解它为什么有效、哪里可以改进，再在许可证允许的范围内做出清楚、可追溯的改造。
+学习一个 Skill 不等于复制它。真正值得留下来的，是理解它为什么有效、哪里可以改进，再在许可证允许的范围内做出清楚、可追溯的实现。
 
 ---
 
 ## Release philosophy
-
-不同 Skill 风险不同，不强求所有能力使用同一套重型测试，但至少应该知道它解决什么、在哪些场景会失败。
 
 ```text
 real problem
@@ -272,6 +289,6 @@ real problem
 → publish transparently
 ```
 
-复杂或高风险 Skill 会使用更严格的 eval / regression；简单工具则保持轻量，不为了“显得工程化”而过度设计。
+不同 Skill 风险不同，不强求统一重型测试，但至少应该知道它解决什么、在哪些场景会失败。
 
-如果你发现某个 Skill 有稳定、可复现的问题，欢迎提 Issue。
+如果一个流程一直“看起来越来越完整”，但没有更多真实产出或更好的现实判断，那不是进步。
