@@ -4,30 +4,91 @@
 
 ---
 
-## 1. Capture / Problem Note
+## 0. Seed / Incubation Note
+
+只有一点模糊想法时，用这个就够了，不需要立刻建 Problem Card。
+
+```markdown
+# Seed
+
+created: YYYY-MM-DD
+source: self / conversation / learning / work / user / platform
+
+## 原话 / 种子
+
+
+## 为什么我停了一下（可空）
+
+
+## 对话里逐渐长出的材料
+
+- 我明确说过的：
+- 我认可 / 修正过的：
+- 真实例子：
+- 出现的张力：
+- AI 提出的候选连接：
+- 需要查证：
+```
+
+目标：**允许很不完整。**
+
+---
+
+## 1. Crystallize Card
+
+当 Seed 经过几轮对话开始有形状时再用：
+
+```markdown
+# Crystallize
+
+真正聊出来的主题：
+我似乎最在意的是：
+核心张力：
+
+候选真问题：
+1.
+2.
+3.
+
+候选核心判断：
+
+已有案例 / 材料：
+
+AI 提出但我尚未确认：
+
+需要外部查证：
+
+只有我能补充：
+```
+
+候选判断可以由 AI 从对话中提炼；用户只需要确认、修正或否定。
+
+---
+
+## 2. Capture / Problem Note
+
+当已经形成值得继续研究的问题后，再建立 Problem ID。
 
 ```markdown
 # P-YYYY-MMDD-XX 标题
 
 status: captured
-source: self / user / comment / platform / learning / work
+source: self / user / comment / platform / learning / work / conversation
 created: YYYY-MM-DD
 
 ## 现象 / 原话
 
 
-## 我觉得奇怪的地方
+## 真问题
 
 
-## 来源
+## 来源 Seed（如有）
 
 ```
 
-目标：**30 秒内记完。**
-
 ---
 
-## 2. Frame Card
+## 3. Frame Card
 
 ```markdown
 # 真问题
@@ -53,14 +114,13 @@ created: YYYY-MM-DD
 
 ---
 
-## 3. Research Card
+## 4. Research Card
 
 ```markdown
 # Research
 
-## 初始解释
+## 初始解释（有就写，没有不强制）
 
-在查资料和调用模型前，我原本怎么想：
 
 ## 竞争解释
 
@@ -90,7 +150,7 @@ H3：
 
 ---
 
-## 4. Judge + Red Team Card
+## 5. Judge + Red Team Card
 
 ```markdown
 # Judge
@@ -110,16 +170,15 @@ H3：
 
 如果删掉哪个工具后结论不变：
 
-## AI 当前建议
+## AI 提炼的候选判断（如来自对话）
 
-关键机制：
-主要权衡：
-行动含义：
-更新条件：
+版本 A：
+版本 B：
+我确认 / 修正后：
 
-## 我的判断
+## 当前判断
 
-我的核心判断：
+这是我当前认可的判断：
 最关键依据：
 这个判断不适用于：
 什么证据会让我改变判断：
@@ -138,7 +197,33 @@ H3：
 
 ---
 
-## 5. Canonical Draft Card
+## 6. Article Brief / Gap Check
+
+当用户说“把刚才聊的整理成文章”时，AI 内部先检查：
+
+```markdown
+# Article Brief
+
+真正主题：
+用户已经认可的核心判断：
+关键推理链：
+用户自己的例子 / 原话 / 转折：
+AI 提出但尚未确认：
+需要外部查证：
+只有用户能补充：
+
+## Gap Check
+
+- [ ] 外部事实缺口 → AI Research
+- [ ] 只有用户知道且会改变文章 → 提 1~3 个具体问题
+- [ ] 只是小细节 → 保守处理 / 删除 / 标明不确定
+
+当前材料适合：L1 / L2 / L3
+```
+
+---
+
+## 7. Canonical Draft Card
 
 ```markdown
 # Canonical Draft
@@ -172,7 +257,7 @@ H3：
 
 ---
 
-## 6. Publish / Adapt Card
+## 8. Publish / Adapt Card
 
 ```markdown
 # Publish
@@ -192,7 +277,7 @@ H3：
 
 ---
 
-## 7. Review / Learn Card
+## 9. Review / Learn Card
 
 ```markdown
 # Review
@@ -203,7 +288,7 @@ H3：
 主要误解：
 强反驳：
 新案例 / 反例：
-新问题：
+新 Seed / 新问题：
 
 ## 数据反馈
 
@@ -225,6 +310,8 @@ H3：
 
 AI 最有价值的步骤：
 AI 最越界的步骤：
+AI 有没有在我脑子空白时降低负担：
+AI 有没有产生太多我只是被动点头的观点：
 卡最久的步骤：
 删掉哪个步骤会更轻：
 
@@ -236,16 +323,11 @@ AI 最越界的步骤：
 新增触发信号：
 新增边界 / 反例：
 是否值得写回 Model Card：
-
-## 下一步
-
-新 Problem ID：
-流程只改一件什么：
 ```
 
 ---
 
-## 8. Personal Model Card
+## 10. Personal Model Card
 
 不要预先为 100 个模型逐一建卡。只有模型经过真实 Case 多次使用，或确实改变过重要判断时再建立。
 
