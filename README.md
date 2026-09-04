@@ -33,6 +33,7 @@
 |---|---|---|
 | 🔬 [`research`](./research) | 证据优先的 L1 综合调研：读懂一个对象当前最可靠的已有知识 | V0.3 |
 | 🧪 [`evidence-audit`](./evidence-audit) | 审核一份答案/报告的 Claim → Evidence 链条到底站不站得住 | V0.2 |
+| 🌱 [`progressive-elaboration`](./progressive-elaboration) | 允许从模糊 Seed 开始，通过低压力对话逐步结晶成可执行的问题、任务或下一步 | V0.1 |
 
 新的 Skill 会直接作为新的顶层目录加入，不要求属于同一个领域。
 
@@ -51,6 +52,7 @@ lumos-skills/
 │
 ├── research/
 ├── evidence-audit/
+├── progressive-elaboration/
 │
 ├── .claude-plugin/             # Claude Code distribution adapter
 │   └── marketplace.json
@@ -96,7 +98,14 @@ lumos-skills/
 https://github.com/lumospp/lumos-skills/tree/main/research
 ```
 
-Standalone 安装通常可直接使用 `/research`。
+或者：
+
+```text
+帮我安装这个 Skill：
+https://github.com/lumospp/lumos-skills/tree/main/progressive-elaboration
+```
+
+Standalone 安装通常可直接使用对应 Skill。
 
 ### Codex / other Agent Skills clients
 
@@ -105,6 +114,7 @@ Standalone 安装通常可直接使用 `/research`。
 ```text
 https://github.com/lumospp/lumos-skills/tree/main/research
 https://github.com/lumospp/lumos-skills/tree/main/evidence-audit
+https://github.com/lumospp/lumos-skills/tree/main/progressive-elaboration
 ```
 
 具体安装命令由各 Agent 客户端决定，Skill 源码保持同一份。
@@ -155,6 +165,34 @@ https://github.com/lumospp/lumos-skills/tree/main/evidence-audit
 
 ---
 
+## 🌱 progressive-elaboration — Progressive Elaboration
+
+它解决的是一个跨领域问题：
+
+> **用户还没有把问题、需求、目标或故障描述清楚时，Agent 怎么先接住一个低分辨率输入，并逐渐把它变成可行动的共享状态？**
+
+它允许从一个概念、一点感觉、一句抱怨、一个报错、一个截图、一个模糊目标开始，通过：
+
+```text
+Seed
+→ Explore（接住 / 展开 / 连接 / 轻问）
+→ Crystallize
+→ Frame
+→ handoff 到 research / coding / product / creator / learning 等领域能力
+```
+
+核心不是“多问几个澄清问题”，而是降低空白页压力：一次只问一个真正改变方向的问题；用户说“不知道”时提供具体支架；AI 可以提炼候选结构，但人保留理解、修正、价值选择和责任。
+
+Creator System 的 Seed-first / Incubation 流程就是这个通用 Skill 的第一个领域实现。
+
+→ [`progressive-elaboration/SKILL.md`](./progressive-elaboration/SKILL.md)
+
+未来 Codex / Agent 工作台的状态驱动想法暂存于：
+
+→ [`progressive-elaboration/references/workbench-notes.md`](./progressive-elaboration/references/workbench-notes.md)
+
+---
+
 ## About the research series
 
 `research` 只是当前仓库里的一个系列，不代表整个仓库的主题。
@@ -183,6 +221,7 @@ L3 高级调研：读出新问题
 6. **Transparent provenance** — 原创就是原创；基于别人 Skill 改造就明确标注来源和差异。
 7. **Respect licenses** — 公开可见不等于可以任意复制修改，二创前先确认上游许可证。
 8. **Reality feedback** — 真实使用暴露的问题比继续堆 Prompt 规则更有价值。
+9. **Low-resolution input is valid** — 当任务本身还模糊时，Agent 应帮助结构逐渐长出来，而不是要求用户先完成需求分析。
 
 ---
 
