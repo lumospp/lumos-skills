@@ -1,5 +1,7 @@
 # Incubation — 从模糊种子到可写材料
 
+> 这一层是通用 [`progressive-elaboration`](../../progressive-elaboration/) Skill 在 Creator System 中的领域化实现。通用 Skill 负责“弱输入 → 渐进澄清 → 结晶 → 交接”的人机协作协议；本文只补充创作场景特有的 Seed、Article Brief、Research、Judge 与 Draft 衔接。通用交互原则以后应优先在顶层 Skill 中演化，避免不同 Agent 各自复制一套。
+
 ## 1. 为什么需要这一层
 
 Creator System 不能假设每次创作都从一个清楚的问题开始。
