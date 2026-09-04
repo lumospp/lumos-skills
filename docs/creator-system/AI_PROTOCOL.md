@@ -20,7 +20,7 @@ V0.2 继续保留一个主入口，但内部按不同模式工作；同时将 **
 
 ## 2. 推理内核：Modern Thinking Tools
 
-Modern Thinking Tools 不是新的“第七个 Agent”，而是 Framer、Researcher、Judge、Red Team 和 Reviewer 在需要时共同调用的 **Reasoning Engine**。
+Modern Thinking Tools 不是新的独立 Agent，而是 Framer、Researcher、Judge、Red Team 和 Reviewer 在需要时共同调用的 **Reasoning Engine**。
 
 ### 2.1 最小问题地图
 
@@ -66,7 +66,7 @@ Modern Thinking 负责“怎样看”，Research / Evidence Audit 负责“事�
 
 ---
 
-## 3. 六种 AI 模式
+## 3. 七种 AI 模式
 
 ### Mode A — Framer / 问题澄清者
 
